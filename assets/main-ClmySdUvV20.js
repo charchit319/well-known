@@ -144,7 +144,7 @@
       <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.8"/>
       <circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/>
       <circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/>
-    `,phone:`
+    `,phone:`Snacks
       <path d="M6.8 4.5 9 3.5l3 5.1-1.9 1.4c.8 1.8 2.2 3.2 4 4l1.4-1.9 5.1 3-1 2.2c-.5 1.1-1.7 1.8-2.9 1.5C9.5 17.6 4.4 12.5 3.2 6.3 3 5.1 3.7 4.9 4.8 4.5h2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
     `,mail:`
       <rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/>
@@ -839,18 +839,19 @@ const hpTab = () => `<a class="hp-tab font-rethink-sans" href="/reservations/" a
 // ===== END HOME PAGE v3 =====
 
 // ===== MENU PAGES v2 =====
-const HM_I = (n) => `/img/EMBERTOORAK-WEB-${n}.jpg`;
+const HM_I = (n) => (n.includes(".") ? `/img/${n}` : `/img/EMBERTOORAK-WEB-${n}.jpg`);;
 const HM_POOL = ["024","030","049","157","145","182","118","162","130","195","092","007"].map(HM_I);
 // first match wins; anything else cycles through HM_POOL
 const HM_CAT_IMG = [
-  ["snacks","024"], ["starters","030"], ["entree","030"], ["small to share","130"],
-  ["pasta","145"], ["o'connor","182"], ["sharing","118"], ["westholme","162"],
-  ["sauces","092"], ["sides","130"], ["crowd","049"], ["dessert","195"],
-  ["little guests","007"], ["mains","157"],
+  ["snacks","SHORT_WAGYU_RIBS_CROQUETTE.jpeg"], ["starters","WAGYU_CHARCHUTERIE_MAYURABRESAOLA.jpeg"], ["entree","030"], ["small to share","130"],
+  ["pasta","145"], ["o'connor","steakssection.jpeg"], ["sharing","118"], ["westholme","162"],
+  ["sauces","191"], ["sides","130"], ["crowd","049"], ["dessert","100"],
+  ["little guests","121"], ["mains","157"],["o'connor","SHORT_WAGYU_RIBS_CROQUETTE.jpeg"], ["lunch:mains","121"],
+["set:mains","121"],
 ];
-const hmImg = (title, i, off = 0) => {
+const hmImg = (title, i, off = 0, pid = "") => {
   const t = title.toLowerCase();
-  const hit = HM_CAT_IMG.find(([k]) => t.includes(k));
+  const hit = HM_CAT_IMG.find(([k]) => k === `${pid}:${t}`) || HM_CAT_IMG.find(([k]) => t.includes(k));
   return hit ? HM_I(hit[1]) : HM_POOL[(i + off) % HM_POOL.length];
 };
 const hmSlug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -993,7 +994,7 @@ const hmPage = (panels, active) => {
 
   const body = panels.map((p) => {
     const secs = p.categories.map((c, i) => {
-      const img = hmImg(c.title, k++, multi ? 3 : 0);
+      const img = hmImg(c.title, k++, multi ? 3 : 0, p.id);
       return hmSection(c, img, i % 2 === 0, `${p.id}-${hmSlug(c.title)}`);
     }).join("");
     if (!multi) return secs;
