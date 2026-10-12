@@ -843,11 +843,11 @@ const HM_I = (n) => (n.includes(".") ? `/img/${n}` : `/img/EMBERTOORAK-WEB-${n}.
 const HM_POOL = ["024","030","049","157","145","182","118","162","130","195","092","007"].map(HM_I);
 // first match wins; anything else cycles through HM_POOL
 const HM_CAT_IMG = [
-  ["snacks","SHORT_WAGYU_RIBS_CROQUETTE.jpeg"], ["starters","WAGYU_CHARCHUTERIE_MAYURABRESAOLA.jpeg"], ["entree","030"], ["small to share","130"],
-  ["pasta","145"], ["o'connor","steakssection.jpeg"], ["sharing","118"], ["westholme","162"],
+  ["snacks","WAGYU_CHARCHUTERIE_MAYURABRESAOLA.jpeg"], ["starters","SHORTWAGYURIBSCROQUETTE.jpeg"], ["entree","030"], ["small to share","130"],
+  ["pasta","145"], ["o'connor","steakssection.jpeg"], ["sharing","118"], ["westholme","170"],
   ["sauces","191"], ["sides","130"], ["crowd","049"], ["dessert","100"],
   ["little guests","121"], ["mains","157"],["o'connor","SHORT_WAGYU_RIBS_CROQUETTE.jpeg"], ["lunch:mains","121"],
-["set:mains","121"],
+["set:mains","121"],['raw','020']
 ];
 const hmImg = (title, i, off = 0, pid = "") => {
   const t = title.toLowerCase();
