@@ -34,8 +34,8 @@
 [`Short Ribs Croquette`,`Gentlemen's relish`,`$10`]
 ],subsections:[
 {title:`Wagyu Charcuterie`,intro:`Served with house pickles`,items:[
-[`Mayura 'Signature' MB9+ Bresaola (GF)`,`Wagyu charcuterie, served with house pickles`,`$18`],
-[`Mayura 'Signature' Wagyu Salami (GF)`,`Wagyu charcuterie, served with house pickles`,`$16`]
+[`Mayura 'Signature' MB9+ Bresaola (GF)`,``,`$18`],
+[`Mayura 'Signature' Wagyu Salami (GF)`,``,`$16`]
 ]}
 ]},
 
@@ -845,7 +845,7 @@ const HM_I = (n) => (n.includes(".") ? `/img/${n}` : `/img/EMBERTOORAK-WEB-${n}.
 const HM_POOL = ["024","030","049","157","145","182","118","162","130","195","092","007"].map(HM_I);
 // first match wins; anything else cycles through HM_POOL
 const HM_CAT_IMG = [
-  ["snacks","WAGYU_CHARCHUTERIE_MAYURABRESAOLA.jpeg"], ["starters","SHORTWAGYURIBSCROQUETTE.jpeg"], ["entree","030"], ["small to share","130"],
+  ["snacks","WAGYU_CHARCHUTERIE_MAYURABRESAOLA.jpeg"], ["starters","SKEWER.jpeg"], ["entree","030"], ["small to share","130"],
   ["pasta","145"], ["o'connor","steakssection.jpeg"], ["sharing","118"], ["westholme","170"],["ember","123"],
   ["sauces","191"], ["sides","130"], ["crowd","049"], ["dessert","100"],
   ["little guests","121"], ["mains","157"],["o'connor","SHORT_WAGYU_RIBS_CROQUETTE.jpeg"], ["lunch:mains","121"],
@@ -1070,7 +1070,7 @@ const hmIndex = () => `
 // ===== SET MENUS (tabbed) =====
 const SETS = [
   {
-    id: "sharing", label: "Sharing Experience", title: "Ember Sharing Experience", price: "$110 per person",
+    id: "sharing", label: "Set Menu 1", title: "Ember Sharing Experience", price: "$110 per person",
     intro: "A shared menu for long lunches and intimate dinners. Choose one entree, one main and one dessert.",
     extra: "Wine pairing $49 | Premium cocktail pairing $59",
     categories: [
@@ -1086,13 +1086,13 @@ const SETS = [
         ["Wagyu Rump (200g) MB5+ (GF)", "Recommended: medium rare", ""],
         ["O'Connor Striploin (350g) MB2+ (GF)", "Recommended: medium rare / medium", ""],
         ["Murray Cod (GF)", "Baby potato, asparagus, heirloom tomato, shallots, laksa sauce & crispy curry leaves", ""] ] },
-      { title: "Desserts", note: "Choice of one", items: [
+      { title: "Desserts",img: "/img/EMBERTOORAK-WEB-121.jpg", note: "Choice of one", items: [
         ["Sticky Date Pudding", "Dulce de leche cream, macadamia praline & cinnamon creme anglaise, salted caramel ice cream", ""],
         ["Duo Of Sorbet (V, GF)", "Blood orange / green apple, passion fruit pulp", ""] ] }
     ]
   },
   {
-    id: "ultimate", label: "Ultimate Dining", title: "Ember Ultimate Dining Experience", price: "$119 per person",
+    id: "ultimate", label: "Set Menu 2", title: "Ember Ultimate Dining Experience", price: "$119 per person",
     intro: "A broader shared menu with king prawns, flame-led mains and O'Connor beef. Choose one entree, one main and one dessert.",
     extra: "Wine pairing $49 | Premium cocktail pairing $59",
     categories: [
@@ -1110,7 +1110,7 @@ const SETS = [
         ["Pork Ribeye (GF)", "Caramelised apple, broad beans, shallots, red wine jus", ""],
         ["O'Connor Eye Fillet (200g) MB2+ (GF)", "Recommended: medium rare", ""],
         ["O'Connor Scotch Fillet (350g) MB2+ (GF)", "Recommended: medium", ""] ] },
-      { title: "Desserts", note: "Choice of one", items: [
+      { title: "Desserts",img: "/img/EMBERTOORAK-WEB-121.jpg", note: "Choice of one", items: [
         ["Tiramisu", "A rich fusion of espresso-soaked sponge, creamy mascarpone, grated chocolate & honeycomb", ""],
         ["Sticky Date Pudding", "Dulce de leche cream, macadamia praline & cinnamon creme anglaise, salted caramel ice cream", ""] ] }
     ]
@@ -1130,7 +1130,7 @@ const SETS = [
       { title: "Sauces", note: "Choose one with the feast", items: [
         ["Creamy Mushroom", "", ""], ["Fermented Chilli (GF)", "", ""], ["Chimichurri (GF)", "", ""], ["Bearnaise (GF)", "", ""],
         ["Green Peppercorn", "", ""], ["Red Wine Jus", "", ""], ["Garlic & Herb Butter (GF)", "", ""], ["Mustard Selection", "", ""] ] },
-      { title: "Desserts", note: "Your choice of", items: [
+      { title: "Desserts",img: "/img/EMBERTOORAK-WEB-121.jpg", note: "Your choice of", items: [
         ["Sticky Date Pudding", "Dulce de leche cream, macadamia praline & cinnamon creme anglaise, salted caramel ice cream", ""],
         ["Duo Of Sorbet (V, GF)", "Blood orange / green apple, passion fruit pulp", ""] ] }
     ]
@@ -1151,7 +1151,7 @@ const SETS = [
       { title: "Sauces", note: "Choose one with your main", items: [
         ["Creamy Mushroom", "", ""], ["Fermented Chilli (GF)", "", ""], ["Chimichurri (GF)", "", ""], ["Bearnaise (GF)", "", ""],
         ["Green Peppercorn", "", ""], ["Red Wine Jus", "", ""], ["Garlic & Herb Butter (GF)", "", ""], ["Mustard Selection", "", ""] ] },
-      { title: "Desserts", note: "Choice of one", items: [
+      { title: "Desserts",img: "/img/EMBERTOORAK-WEB-121.jpg", note: "Choice of one", items: [
         ["Basque Cheesecake", "Vanilla cream, macerated cherries.<br><em>Paired with Maxwell Spiced Mead, McLaren Vale, SA</em>", ""],
         ["Tiramisu", "A rich fusion of espresso-soaked sponge, creamy mascarpone, grated chocolate & honeycomb.<br><em>Paired with Rutherglen Muscadelle Topaque</em>", ""] ] }
     ]
@@ -1174,7 +1174,7 @@ const hmSetPage = (sets) => {
         ${p.extra ? `<p class="hm-note" style="margin:18px 0 0">${p.extra}</p>` : ""}
       </div>
       ${p.categories.map((c, i) =>
-        hmSection(c, HM_POOL[(pi * 4 + i) % HM_POOL.length], i % 2 === 0, `${p.id}-${hmSlug(c.title)}`)).join("")}
+                hmSection(c, c.img || HM_POOL[(pi * 4 + i) % HM_POOL.length], i % 2 === 0, `${p.id}-${hmSlug(c.title)}`)).join("")}
     </div>`).join("");
 
   return `
