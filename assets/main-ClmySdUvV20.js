@@ -864,6 +864,7 @@ const hmStyles = () => `
 <style>
   html{scroll-behavior:smooth}
   .hm-page{--hm-head:80px;--hm-nav:54px;background:#061d15;color:#f4ead6;padding-top:var(--hm-head)}
+  .hm-nonav{--hm-nav:0px}
   @media(min-width:640px){.hm-page{--hm-head:96px}}
 
   /* sticky category bar */
@@ -871,8 +872,10 @@ const hmStyles = () => `
   .hm-subnav::-webkit-scrollbar{display:none}
   .hm-subnav a:first-child{margin-left:auto}
   .hm-subnav a:last-child{margin-right:auto}
-  .hm-subnav a{flex:none;padding:6px 0;font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:#cfc5b2;text-decoration:none;border-bottom:1px solid transparent;transition:color .3s,border-color .3s}
-  .hm-subnav a:hover,.hm-subnav a.on{color:#f4ead6;border-bottom-color:#d4a24f}
+  .hm-subnav{gap:12px}
+  .hm-subnav a{flex:none;padding:9px 18px;font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:#cfc5b2;text-decoration:none;border:1px solid transparent;transition:color .3s,background .3s,border-color .3s}
+  .hm-subnav a:hover{color:#f4ead6;border-color:rgba(212,162,79,.6)}
+  .hm-subnav a.on,.hm-subnav a.on:hover{background:#b88938;color:#061d15;border-color:#b88938;font-weight:600}
 
   /* hero */
   .hm-hero{max-width:62rem;margin:0 auto;padding:90px 24px 84px;text-align:center}
@@ -984,14 +987,19 @@ const hmSwitch = (active) => `
       .map(([id, label, href]) => `<a class="${active === id ? "on" : ""}" href="${href}">${label}</a>`).join("")}
   </div>`;
 
+const hmSetPicker = (panels) => `
+  <div class="hm-switch hm-setpick">
+    ${panels.map((p) => `<a href="#${p.id}">${p.label}${p.price ? ` &middot; ${p.price.replace(" per person", "")}` : ""}</a>`).join("")}
+  </div>`;
+
 // panels: array of menu panels (each has id, label, title, intro, price?, actions?, categories)
 const hmPage = (panels, active) => {
   const multi = panels.length > 1;
   const first = panels[0];
   let k = 0;
 
-  const navLinks = multi
-    ? panels.map((p) => `<a href="#${p.id}">${p.label}</a>`)
+    const navLinks = multi
+    ? panels.map((p) => `<a href="#${p.id}">${p.label}${p.price ? ` &middot; ${p.price.replace(" per person", "")}` : ""}</a>`)
     : first.categories.map((c) => `<a href="#${first.id}-${hmSlug(c.title)}">${c.title}</a>`);
 
   const body = panels.map((p) => {
@@ -1021,8 +1029,8 @@ const hmPage = (panels, active) => {
 
   return `
     ${hmStyles()}
-    <div class="hm-page font-rethink-sans">
-      <nav class="hm-subnav" aria-label="Menu sections">${navLinks.join("")}</nav>
+        <div class="hm-page font-rethink-sans ${multi ? "hm-nonav" : ""}">
+            ${multi ? "" : `<nav class="hm-subnav" aria-label="Menu sections">${navLinks.join("")}</nav>`}
       <header class="hm-hero">
         <span class="hm-eyebrow">Ember on Toorak</span>
         <h1 class="font-cormorant-garamond">${title}</h1>
@@ -1031,7 +1039,8 @@ const hmPage = (panels, active) => {
         <div class="hm-actions">
           ${actions.map(([label, href], i) => hmBtn(label, href, i === 0 ? "solid" : "")).join("")}
         </div>
-        ${hmSwitch(active)}
+                                ${multi ? hmSetPicker(panels) : hmSwitch(active)}
+      </header>
       </header>
       ${body}
     </div>`;
@@ -1057,7 +1066,149 @@ const hmIndex = () => `
         </a>`).join("")}
     </div>
   </div>`;
-// ===== END MENU PAGES v2 =====
+
+// ===== SET MENUS (tabbed) =====
+const SETS = [
+  {
+    id: "sharing", label: "Sharing Experience", title: "Ember Sharing Experience", price: "$110 per person",
+    intro: "A shared menu for long lunches and intimate dinners. Choose one entree, one main and one dessert.",
+    extra: "Wine pairing $49 | Premium cocktail pairing $59",
+    categories: [
+      { title: "Entree", note: "Choice of one", items: [
+        ["Appellation Oysters (GF) 6 pcs", "From the east coast of Australia. Yuzu dressing / Spicy tabasco", ""],
+        ["Wagyu Short Rib Croquettes", "Gentlemen's relish, Davidson plum, parmesan", ""],
+        ["Roasted Beetroot (VG, VO, GF)", "Stracciatella, caramelised grapes, walnuts, grapefruit vinaigrette", ""],
+        ["Lightly Fried Calamari (GFO)", "Yuzu mayo, herbs, lemon", ""] ] },
+      { title: "Mains", note: "Choice of one", items: [
+        ["Flamed Chicken (GFO)", "Fermented chilli glaze, green harissa, pickle, rosemary potato", ""],
+        ["Goat Cheese Tortellini (VG)", "Brown butter, sage, raisin compote, hazelnut, aged parmesan", ""],
+        ["Pork Ribeye (GF)", "Caramelised apple, broad beans, shallots, red wine jus", ""],
+        ["Wagyu Rump (200g) MB5+ (GF)", "Recommended: medium rare", ""],
+        ["O'Connor Striploin (350g) MB2+ (GF)", "Recommended: medium rare / medium", ""],
+        ["Murray Cod (GF)", "Baby potato, asparagus, heirloom tomato, shallots, laksa sauce & crispy curry leaves", ""] ] },
+      { title: "Desserts", note: "Choice of one", items: [
+        ["Sticky Date Pudding", "Dulce de leche cream, macadamia praline & cinnamon creme anglaise, salted caramel ice cream", ""],
+        ["Duo Of Sorbet (V, GF)", "Blood orange / green apple, passion fruit pulp", ""] ] }
+    ]
+  },
+  {
+    id: "ultimate", label: "Ultimate Dining", title: "Ember Ultimate Dining Experience", price: "$119 per person",
+    intro: "A broader shared menu with king prawns, flame-led mains and O'Connor beef. Choose one entree, one main and one dessert.",
+    extra: "Wine pairing $49 | Premium cocktail pairing $59",
+    categories: [
+      { title: "Entree", note: "Choice of one", items: [
+        ["Appellation Oysters (GF) 6 pcs", "From the east coast of Australia. Yuzu dressing / Spicy tabasco", ""],
+        ["Grilled King Prawns (GFO)", "Kampot pepper butter, grilled focaccia bread", ""],
+        ["Roasted Beetroot (VG, VO, GF)", "Stracciatella, caramelised grapes, walnuts, grapefruit vinaigrette", ""],
+        ["Lightly Fried Calamari (GFO)", "Yuzu mayo, herbs, lemon", ""],
+        ["Wagyu Rib Cap Skewer (GF)", "BBQ glaze, romesco sauce, jalapeno verde, kimchi", ""] ] },
+      { title: "Mains", note: "Choice of one", items: [
+        ["Flamed Chicken (GFO)", "Fermented chilli glaze, green harissa, pickle, rosemary potato", ""],
+        ["Hand Rolled Gnocchi (VG)", "Truffle & sage cream, roasted Jerusalem artichoke, heirloom tomatoes, hazelnuts, pecorino", ""],
+        ["Gundagai Lamb (GF)", "Open flamed cutlets, creamy mash, lemon & herb glaze, chimichurri", ""],
+        ["Murray Cod (GF)", "Baby potato, asparagus, heirloom tomato, shallots, laksa sauce & crispy curry leaves", ""],
+        ["Pork Ribeye (GF)", "Caramelised apple, broad beans, shallots, red wine jus", ""],
+        ["O'Connor Eye Fillet (200g) MB2+ (GF)", "Recommended: medium rare", ""],
+        ["O'Connor Scotch Fillet (350g) MB2+ (GF)", "Recommended: medium", ""] ] },
+      { title: "Desserts", note: "Choice of one", items: [
+        ["Tiramisu", "A rich fusion of espresso-soaked sponge, creamy mascarpone, grated chocolate & honeycomb", ""],
+        ["Sticky Date Pudding", "Dulce de leche cream, macadamia praline & cinnamon creme anglaise, salted caramel ice cream", ""] ] }
+    ]
+  },
+  {
+    id: "feast", label: "Sharing Feast", title: "Ember Sharing Feast Experience", price: "$119 per person",
+    intro: "A drink on arrival, a starter, a feast of four mains to share and a dessert.",
+    categories: [
+      { title: "On Arrival", items: [
+        ["A glass of your choice", "House selected wine, tap beer, cocktail or soft drink per person", ""] ] },
+      { title: "Starters", note: "Your choice of", items: [
+        ["Short Ribs Croquette", "Gentlemen's relish", ""],
+        ["Lightly Fried Calamari (GFO)", "Yuzu mayo, herbs, lemon", ""],
+        ["Grilled Honey Fig (VG, VO)", "Stracciatella, pinenuts tarator, basil, vincotto, extra virgin olive oil, focaccia fingers", ""] ] },
+      { title: "Mains", note: "To share", items: [
+        ["Ember's Feast", "Slow roasted Angus short rib (GF), Wagyu rump (200g), flamed chicken (GFO), Gundagai lamb (GF). Served with rosemary potato, house salad & choice of one sauce.", ""] ] },
+      { title: "Sauces", note: "Choose one with the feast", items: [
+        ["Creamy Mushroom", "", ""], ["Fermented Chilli (GF)", "", ""], ["Chimichurri (GF)", "", ""], ["Bearnaise (GF)", "", ""],
+        ["Green Peppercorn", "", ""], ["Red Wine Jus", "", ""], ["Garlic & Herb Butter (GF)", "", ""], ["Mustard Selection", "", ""] ] },
+      { title: "Desserts", note: "Your choice of", items: [
+        ["Sticky Date Pudding", "Dulce de leche cream, macadamia praline & cinnamon creme anglaise, salted caramel ice cream", ""],
+        ["Duo Of Sorbet (V, GF)", "Blood orange / green apple, passion fruit pulp", ""] ] }
+    ]
+  },
+  {
+    id: "pairing", label: "Food & Wine Pairing", title: "Ember Ultimate Food & Wine Pairing Experience", price: "$149 per person",
+    intro: "A shared seafood platter, a main and a dessert, each paired with a wine selected to match.",
+    categories: [
+      { title: "Cold Seafood Platter", note: "To share", items: [
+        ["Chef's Seafood Selection", "Half lobster, 6 appellation oysters (GF), 4 king prawns, Marie Rose sauce & hot sauce.<br><em>Paired with Bandini Prosecco, Veneto, Italy</em>", ""] ] },
+      { title: "Mains", note: "Choice of one", items: [
+        ["Slow Roasted Angus Short Rib (GF)", "Date relish, kale, rosemary potato, charred onion, puffed quinoa, red wine jus.<br><em>Paired with Moppity Atrius Tempranillo, Hilltops, NSW</em>", ""],
+        ["O'Connor Ribeye On The Bone (400g) MB2+ Grainfed", "Recommended: medium, served with rosemary potato or salad & choice of one sauce.<br><em>Paired with Seppeltsfield Shiraz, Barossa Valley, South Australia</em>", ""],
+        ["Murray Cod (GF)", "Baby potato, asparagus, heirloom tomato, shallots, laksa sauce & crispy curry leaves.<br><em>Paired with Coeur des Sages Macon Village Chardonnay</em>", ""],
+        ["Gundagai Lamb (GF)", "Open flamed cutlets, creamy mash, lemon & herb glaze, chimichurri.<br><em>Paired with Penny's Hill Cabernet Sauvignon, McLaren Vale, South Australia</em>", ""],
+        ["Flamed Chicken (GFO)", "Fermented chilli glaze, green harissa, pickle, rosemary potato.<br><em>Paired with Maude Pinot Gris, Central Otago, NZ</em>", ""],
+        ["Goat Cheese Tortellini (VG)", "Brown butter, sage, raisin compote, hazelnut, aged parmesan.<br><em>Paired with Fiano Tellurian, Heathcote, Victoria</em>", ""] ] },
+      { title: "Sauces", note: "Choose one with your main", items: [
+        ["Creamy Mushroom", "", ""], ["Fermented Chilli (GF)", "", ""], ["Chimichurri (GF)", "", ""], ["Bearnaise (GF)", "", ""],
+        ["Green Peppercorn", "", ""], ["Red Wine Jus", "", ""], ["Garlic & Herb Butter (GF)", "", ""], ["Mustard Selection", "", ""] ] },
+      { title: "Desserts", note: "Choice of one", items: [
+        ["Basque Cheesecake", "Vanilla cream, macerated cherries.<br><em>Paired with Maxwell Spiced Mead, McLaren Vale, SA</em>", ""],
+        ["Tiramisu", "A rich fusion of espresso-soaked sponge, creamy mascarpone, grated chocolate & honeycomb.<br><em>Paired with Rutherglen Muscadelle Topaque</em>", ""] ] }
+    ]
+  }
+];
+
+const hmSetPage = (sets) => {
+  const tabs = sets.map((p) =>
+
+      `<a href="#${p.id}" data-settab="${p.id}"><span class="hm-tab-name">${p.label}</span><span class="hm-tab-price">${p.price.replace(" per person", "")}</span></a>`).join("");
+
+  const panels = sets.map((p, pi) => `
+    <div class="hm-panel hm-off" id="${p.id}" data-setpanel="${p.id}">
+      <div class="hm-panel-head font-rethink-sans">
+        <span class="hm-eyebrow">Shared dining</span>
+        <h2 class="font-cormorant-garamond">${p.title}</h2>
+        <div class="hm-dots"></div>
+        <p class="hm-price">${p.price}</p>
+        <p class="hm-intro">${p.intro}</p>
+        ${p.extra ? `<p class="hm-note" style="margin:18px 0 0">${p.extra}</p>` : ""}
+      </div>
+      ${p.categories.map((c, i) =>
+        hmSection(c, HM_POOL[(pi * 4 + i) % HM_POOL.length], i % 2 === 0, `${p.id}-${hmSlug(c.title)}`)).join("")}
+    </div>`).join("");
+
+  return `
+    ${hmStyles()}
+        <style>
+      .hm-off{display:none}.hm-nonav{--hm-nav:0px}
+      .hm-setpick{display:grid;grid-template-columns:repeat(4,1fr);width:100%;max-width:62rem;margin-left:auto;margin-right:auto}
+      .hm-setpick a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px 14px;text-align:center}
+      .hm-setpick a+a{border-left:1px solid rgba(184,137,56,.6)}
+      .hm-tab-name{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}
+      .hm-tab-price{font-size:1.05rem;letter-spacing:.06em;font-family:"Cormorant Garamond",serif;opacity:.85}
+      .hm-setpick a.on .hm-tab-price{opacity:1}
+      @media(max-width:700px){
+        .hm-setpick{grid-template-columns:1fr 1fr}
+        .hm-setpick a+a{border-left:0}
+        .hm-setpick a:nth-child(even){border-left:1px solid rgba(184,137,56,.6)}
+        .hm-setpick a:nth-child(n+3){border-top:1px solid rgba(184,137,56,.6)}
+      }
+    </style>
+    <div class="hm-page font-rethink-sans hm-nonav">
+      <header class="hm-hero">
+        <span class="hm-eyebrow">Ember on Toorak</span>
+        <h1 class="font-cormorant-garamond">Set Menus</h1>
+        <p class="hm-intro">Shared menus for long lunches, intimate dinners and group dining. Choose a menu below.</p>
+        <div class="hm-actions">
+          ${hmBtn("Reserve your table", "/reservations/", "solid")}
+          ${hmBtn("Ask about groups", "/contact/")}
+        </div>
+        <div class="hm-switch hm-setpick">${tabs}</div>
+      </header>
+      ${panels}
+    </div>`;
+};
+// ===== END SET MENUS =====
 var be={home:()=>`
   ${z()}
   
@@ -1076,7 +1227,7 @@ var be={home:()=>`
 `,menus: () => hmIndex(),
 alacarte: () => hmPage([{ ...h.alacarte, categories: C(h.alacarte) }], "alacarte"),
 lunch: () => hmPage([h.lunch], "lunch"),
-setMenu: () => hmPage(g, "set"),
+setMenu: () => hmSetPage(SETS),
 drinks:()=>`
   ${B(`From the bar`,`Drinks`,`Cocktails, aperitifs, beer and spirits for the first drink, the last drink, and everything between.`,n.cocktail,[[`Wine list`,`/wine-list/`,`light`],[`Book at the bar`,c]])}
   ${fe(_,!0)}
@@ -1096,7 +1247,7 @@ drinks:()=>`
   ${_e()}
   ${Z()}
 `},xe=()=>{let e=i[O()]||`home`;return document.title={home:`Ember on Toorak`,about:`About | Ember on Toorak`,menus:`Menus | Ember on Toorak`,alacarte:`A La Carte | Ember on Toorak`,lunch:`Lunch | Ember on Toorak`,setMenu:`Set Menu | Ember on Toorak`,drinks:`Drinks | Ember on Toorak`,wineList:`Wine List | Ember on Toorak`,experience:`Experience | Ember on Toorak`,reservations:`Reservations | Ember on Toorak`,contact:`Contact | Ember on Toorak`}[e]||`Ember on Toorak`,`
-    ${I()}
+        <style>html,body{cursor:auto!important}a,button,.gallery-item,summary{cursor:pointer!important}.cursor-dot,.cursor-ring{display:none!important}</style>
     ${F()}
     <main>${be[e]()}</main>
     ${ye()}
@@ -1108,12 +1259,13 @@ drinks:()=>`
       <button id="lightboxClose" class="magnetic absolute right-5 top-5 border border-white/30 px-4 py-3 font-rethink-sans text-sm text-[#f4ead6]" type="button">Close</button>
       <img id="lightboxImage" class="mx-auto h-full max-h-[92vh] w-full max-w-6xl object-contain" alt="">
     </div>
-  `};document.body.className=`bg-[#061d15] font-rethink-sans antialiased`,document.querySelector(`#app`).innerHTML=xe();var Se=()=>{let e=document.querySelector(`#mobileMenu`),t=document.querySelector(`#menuToggle`),n=document.querySelector(`#siteHeader`);t?.addEventListener(`click`,()=>{let r=!e.classList.contains(`hidden`);e.classList.toggle(`hidden`,r),t.setAttribute(`aria-expanded`,String(!r)),n?.classList.toggle(`menu-open`,!r)})},Ce=()=>{let e=document.querySelector(`#siteHeader`),t=()=>e?.classList.toggle(`is-scrolled`,window.scrollY>32);t(),window.addEventListener(`scroll`,t,{passive:!0})},we=()=>{let e=O();document.querySelectorAll(`.nav-link`).forEach(t=>{let n=t.dataset.path;(n===e||n===`/menus/`&&e.startsWith(`/menus/`)||n===`/drinks/`&&e===`/wine-list/`)&&t.classList.add(`text-[#d4a24f]`,`underline`)})},Te=()=>{let e=document.querySelectorAll(`.reveal, section h2, section article, .menu-line`);if(!e.length)return;let t=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.classList.add(`is-visible`),t.unobserve(e.target))})},{threshold:.12});e.forEach(e=>{e.classList.add(`reveal`),e.getBoundingClientRect().top<window.innerHeight*.92?e.classList.add(`is-visible`):t.observe(e)})},Q,$=({title:e,message:t,type:n=`success`})=>{let r=document.querySelector(`#siteToast`),i=document.querySelector(`#siteToastTitle`),a=document.querySelector(`#siteToastMessage`);!r||!i||!a||(i.textContent=e,a.textContent=t,r.dataset.type=n,r.classList.add(`is-visible`),clearTimeout(Q),Q=window.setTimeout(()=>{r.classList.remove(`is-visible`)},4600))};Se(),Ce(),we(),document.querySelectorAll(`form[data-contact-form]`).forEach(e=>{e.addEventListener(`submit`,async e=>{e.preventDefault();let t=e.currentTarget,n=t.querySelector(`button[type="submit"]`),r=n?.textContent||`Send enquiry`;n&&(n.disabled=!0,n.textContent=`Sending...`);try{let e=await fetch(t.action,{method:`POST`,body:new FormData(t),headers:{Accept:`application/json`}}),n=await e.json();if(!e.ok||!n.success)throw Error(n.message||`Submission failed`);t.reset(),$({title:`Enquiry sent`,message:`Thank you. The Ember team will be in touch shortly.`})}catch{$({title:`Could not send`,message:`Please try again, or call the restaurant directly.`,type:`error`})}finally{n&&(n.disabled=!1,n.textContent=r)}})}),(()=>{let e=document.querySelector(`#lightbox`),t=document.querySelector(`#lightboxImage`),n=document.querySelector(`#lightboxClose`);document.querySelectorAll(`.gallery-item`).forEach(n=>{n.addEventListener(`click`,()=>{t.src=n.dataset.gallery,e.classList.remove(`hidden`),document.body.classList.add(`overflow-hidden`)})});let r=()=>{e.classList.add(`hidden`),t.removeAttribute(`src`),document.body.classList.remove(`overflow-hidden`)};n?.addEventListener(`click`,r),e?.addEventListener(`click`,t=>{t.target===e&&r()}),document.addEventListener(`keydown`,t=>{t.key===`Escape`&&!e?.classList.contains(`hidden`)&&r()})})(),Te(),(()=>{if(!window.matchMedia(`(pointer:fine)`).matches)return;let e=document.querySelector(`.cursor-dot`),t=document.querySelector(`.cursor-ring`),n=window.innerWidth/2,r=window.innerHeight/2,i=n,a=r,o=()=>{i+=(n-i)*.18,a+=(r-a)*.18,e.style.transform=`translate3d(${n}px, ${r}px, 0)`,t.style.transform=`translate3d(${i}px, ${a}px, 0)`,requestAnimationFrame(o)};window.addEventListener(`mousemove`,e=>{n=e.clientX,r=e.clientY}),document.querySelectorAll(`a, button, input, textarea, .gallery-item`).forEach(e=>{e.addEventListener(`mouseenter`,()=>document.body.classList.add(`cursor-active`)),e.addEventListener(`mouseleave`,()=>document.body.classList.remove(`cursor-active`))}),o()})(),document.querySelectorAll(`.interactive-hero`).forEach(e=>{e.addEventListener(`pointermove`,t=>{let n=e.getBoundingClientRect(),r=(t.clientX-n.left)/n.width,i=(t.clientY-n.top)/n.height;e.style.setProperty(`--mx`,`${r*100}%`),e.style.setProperty(`--my`,`${i*100}%`),e.style.setProperty(`--rx`,`${(i-.5)*-7}deg`),e.style.setProperty(`--ry`,`${(r-.5)*9}deg`),e.querySelectorAll(`.hero-float`).forEach(e=>{let t=Number(e.dataset.depth||10);e.style.transform=`translate3d(${(r-.5)*t}px, ${(i-.5)*t}px, 0)`})}),e.addEventListener(`pointerleave`,()=>{e.style.setProperty(`--mx`,`50%`),e.style.setProperty(`--my`,`50%`),e.style.setProperty(`--rx`,`0deg`),e.style.setProperty(`--ry`,`0deg`)})}),window.matchMedia(`(pointer:fine)`).matches&&document.querySelectorAll(`.tilt-card`).forEach(e=>{e.addEventListener(`pointermove`,t=>{let n=e.getBoundingClientRect(),r=(t.clientX-n.left)/n.width-.5,i=(t.clientY-n.top)/n.height-.5;e.style.transform=`perspective(900px) rotateX(${i*-4}deg) rotateY(${r*5}deg) translateY(-2px)`}),e.addEventListener(`pointerleave`,()=>{e.style.transform=``})}),window.matchMedia(`(pointer:fine)`).matches&&document.querySelectorAll(`.magnetic`).forEach(e=>{e.addEventListener(`pointermove`,t=>{let n=e.getBoundingClientRect(),r=t.clientX-n.left-n.width/2,i=t.clientY-n.top-n.height/2;e.style.transform=`translate(${r*.08}px, ${i*.08}px)`}),e.addEventListener(`pointerleave`,()=>{e.style.transform=``})});
+  `};document.body.className=`bg-[#061d15] font-rethink-sans antialiased`,document.querySelector(`#app`).innerHTML=xe();var Se=()=>{let e=document.querySelector(`#mobileMenu`),t=document.querySelector(`#menuToggle`),n=document.querySelector(`#siteHeader`);t?.addEventListener(`click`,()=>{let r=!e.classList.contains(`hidden`);e.classList.toggle(`hidden`,r),t.setAttribute(`aria-expanded`,String(!r)),n?.classList.toggle(`menu-open`,!r)})},Ce=()=>{let e=document.querySelector(`#siteHeader`),t=()=>e?.classList.toggle(`is-scrolled`,window.scrollY>32);t(),window.addEventListener(`scroll`,t,{passive:!0})},we=()=>{let e=O();document.querySelectorAll(`.nav-link`).forEach(t=>{let n=t.dataset.path;(n===e||n===`/menus/`&&e.startsWith(`/menus/`)||n===`/drinks/`&&e===`/wine-list/`)&&t.classList.add(`text-[#d4a24f]`,`underline`)})},Te=()=>{let e=document.querySelectorAll(`.reveal, section h2, section article, .menu-line`);if(!e.length)return;let t=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.classList.add(`is-visible`),t.unobserve(e.target))})},{threshold:.12});e.forEach(e=>{e.classList.add(`reveal`),e.getBoundingClientRect().top<window.innerHeight*.92?e.classList.add(`is-visible`):t.observe(e)})},Q,$=({title:e,message:t,type:n=`success`})=>{let r=document.querySelector(`#siteToast`),i=document.querySelector(`#siteToastTitle`),a=document.querySelector(`#siteToastMessage`);!r||!i||!a||(i.textContent=e,a.textContent=t,r.dataset.type=n,r.classList.add(`is-visible`),clearTimeout(Q),Q=window.setTimeout(()=>{r.classList.remove(`is-visible`)},4600))};Se(),Ce(),we(),document.querySelectorAll(`form[data-contact-form]`).forEach(e=>{e.addEventListener(`submit`,async e=>{e.preventDefault();let t=e.currentTarget,n=t.querySelector(`button[type="submit"]`),r=n?.textContent||`Send enquiry`;n&&(n.disabled=!0,n.textContent=`Sending...`);try{let e=await fetch(t.action,{method:`POST`,body:new FormData(t),headers:{Accept:`application/json`}}),n=await e.json();if(!e.ok||!n.success)throw Error(n.message||`Submission failed`);t.reset(),$({title:`Enquiry sent`,message:`Thank you. The Ember team will be in touch shortly.`})}catch{$({title:`Could not send`,message:`Please try again, or call the restaurant directly.`,type:`error`})}finally{n&&(n.disabled=!1,n.textContent=r)}})}),(()=>{let e=document.querySelector(`#lightbox`),t=document.querySelector(`#lightboxImage`),n=document.querySelector(`#lightboxClose`);document.querySelectorAll(`.gallery-item`).forEach(n=>{n.addEventListener(`click`,()=>{t.src=n.dataset.gallery,e.classList.remove(`hidden`),document.body.classList.add(`overflow-hidden`)})});let r=()=>{e.classList.add(`hidden`),t.removeAttribute(`src`),document.body.classList.remove(`overflow-hidden`)};n?.addEventListener(`click`,r),e?.addEventListener(`click`,t=>{t.target===e&&r()}),document.addEventListener(`keydown`,t=>{t.key===`Escape`&&!e?.classList.contains(`hidden`)&&r()})})(),Te(),document.querySelectorAll(`.interactive-hero`).forEach(e=>{e.addEventListener(`pointermove`,t=>{let n=e.getBoundingClientRect(),r=(t.clientX-n.left)/n.width,i=(t.clientY-n.top)/n.height;e.style.setProperty(`--mx`,`${r*100}%`),e.style.setProperty(`--my`,`${i*100}%`),e.style.setProperty(`--rx`,`${(i-.5)*-7}deg`),e.style.setProperty(`--ry`,`${(r-.5)*9}deg`),e.querySelectorAll(`.hero-float`).forEach(e=>{let t=Number(e.dataset.depth||10);e.style.transform=`translate3d(${(r-.5)*t}px, ${(i-.5)*t}px, 0)`})}),e.addEventListener(`pointerleave`,()=>{e.style.setProperty(`--mx`,`50%`),e.style.setProperty(`--my`,`50%`),e.style.setProperty(`--rx`,`0deg`),e.style.setProperty(`--ry`,`0deg`)})}),window.matchMedia(`(pointer:fine)`).matches&&document.querySelectorAll(`.tilt-card`).forEach(e=>{e.addEventListener(`pointermove`,t=>{let n=e.getBoundingClientRect(),r=(t.clientX-n.left)/n.width-.5,i=(t.clientY-n.top)/n.height-.5;e.style.transform=`perspective(900px) rotateX(${i*-4}deg) rotateY(${r*5}deg) translateY(-2px)`}),e.addEventListener(`pointerleave`,()=>{e.style.transform=``})}),window.matchMedia(`(pointer:fine)`).matches&&document.querySelectorAll(`.magnetic`).forEach(e=>{e.addEventListener(`pointermove`,t=>{let n=e.getBoundingClientRect(),r=t.clientX-n.left-n.width/2,i=t.clientY-n.top-n.height/2;e.style.transform=`translate(${r*.08}px, ${i*.08}px)`}),e.addEventListener(`pointerleave`,()=>{e.style.transform=``})});
 
   (() => {
-  const nav = document.querySelector(".hm-subnav");
+      const nav = document.querySelector(".hm-subnav");
   if (!nav) return;
   const links = [...nav.querySelectorAll("a")];
+  links[0]?.classList.add("on");
   const map = new Map(links.map((a) => [a.getAttribute("href").slice(1), a]));
   const targets = [...map.keys()].map((id) => document.getElementById(id)).filter(Boolean);
   const io = new IntersectionObserver((entries) => {
@@ -1125,4 +1277,18 @@ drinks:()=>`
     });
   }, { rootMargin: "-45% 0px -50% 0px" });
   targets.forEach((t) => io.observe(t));
+})();
+
+(() => {
+  const tabs = [...document.querySelectorAll("[data-settab]")];
+  const panels = [...document.querySelectorAll("[data-setpanel]")];
+  if (!tabs.length) return;
+  const show = (id, save) => {
+    if (!panels.some((p) => p.dataset.setpanel === id)) id = panels[0].dataset.setpanel;
+    panels.forEach((p) => p.classList.toggle("hm-off", p.dataset.setpanel !== id));
+    tabs.forEach((t) => t.classList.toggle("on", t.dataset.settab === id));
+    if (save) history.replaceState(null, "", "#" + id);
+  };
+  tabs.forEach((t) => t.addEventListener("click", (e) => { e.preventDefault(); show(t.dataset.settab, true); }));
+  show(location.hash.slice(1), false);
 })();
