@@ -53,7 +53,7 @@
 [`Roasted Beetroot (VG, VO, GF)`,`Stracciatella, caramelised grapes, walnuts, grapefruit vinaigrette`,`$26`]]},
 {title:`Mains From The Ember`,note:`Finished on Hibachi grill`,items:[
 [`Flamed Chicken (GFO)`,`Fermented chilli glaze, green harissa, rosemary potato`,`$42`],
-[`Gundagai Lamb (GF)`,`Open flamed cutlets, creamy mash, lemon & herb glaze, chimichuri`,`$56`],
+[`Gundagai Lamb (GF)`,`Open flamed cutlets, creamy mash, lemon & herb glaze, chimichurri`,`$56`],
 [`Slow Roasted Angus Short Rib (GF)`,`Date relish, kale, rosemary potato, charred onion, puffed quinoa, red wine jus`,`$59`],
 [`Murray Cod (GF)`,`Baby potato, asparagus, heirloom tomato, shallots, laksa sauce & crispy curry leaves`,`$48`],
 [`Wagyu Meat & Bone Marrow Burger (GFO)`,`Pickled cucumber, crispy onions, bacon jam, burger sauce, melted cheese, toasted brioche bun, fried potato`,`$39`],
@@ -77,7 +77,7 @@
 [`Striploin On The Bone 400g MB4+`,`Grainfed. Recommended medium rare.`,`$82`]]},
 {title:`Sharing Steaks`,note:`Built for the centre of the table. Larger cuts hold heat beautifully, carve cleanly and turn dinner into a slower, more generous steakhouse experience.`,items:[
 [`O'Connor Tomahawk 1.3kg MB3+`,`Serves two. Served with rosemary potato, house salad, brussels sprouts & choice of two sauces. Recommended medium rare / medium.`,`$219`],
-[`Ember's Feast`,`Serves two. Slow roasted Angus short rib (GF), Wagyu Rump (200 g), flamed chicken (GFO), Gundagai lamb (GF). Served with rosemary potato, house salad & choice of one sauce.`,`$179`]]},
+]},
 {title:`Ember's Feast`,note:`Serves two.`,items:[
 [``,`Slow roasted Angus short rib (GF), Wagyu Rump (200 g), flamed chicken (GFO), Gundagai lamb (GF). Served with rosemary potato, house salad & choice of one sauce.`,`$179`]]},
 {title:`Sauces`,items:[
@@ -91,9 +91,9 @@
 [`Truffle Aioli`,``,`$4`]]},
 {title:`Favourite Sides`,items:[
 [`Brussels Sprouts (VG, VO, GF)`,`Brown butter, honey mustard dressing, shallots, pomegranate`,`$18`],
-[`Asparagus (VG, GFO)`,`Bernaise sauce, caper crumbs`,`$18`],
+[`Asparagus (VG, GFO)`,`Béarnaise sauce, caper crumbs`,`$18`],
 [`Charred Sprouting Cauliflower (VG, GF)`,`Fermented chilli butter, almonds`,`$17`],
-[`Charred Harissa Carrot (VG, GF)`,`Chopped Macademia`,`$17`],
+[`Charred Harissa Carrot (VG, GF)`,`Chopped Macadamia`,`$17`],
 [`Little Gem Salad (VG, GF)`,`Charred cos, pistachio dressing, herbs & pickles`,`$17`],
 [`Truffle Potato (GF)`,`Truffle salt, parmesan cheese, truffle aioli`,`$16`],
 [`Ember's Creamy Mash (GF)`,`Brown butter, cheese crumb`,`$16`]]},
